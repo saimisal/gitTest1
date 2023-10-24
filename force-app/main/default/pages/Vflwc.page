@@ -1,0 +1,50 @@
+<apex:page controller="VflwcController" showHeader="false" sidebar="false">
+    <apex:includeLightning />  
+    
+    
+    
+    <!--sample-->
+        <apex:form > <article class="slds-card " style="box-shadow: 0 2px 2px 0 rgb(0 0 0 / 10%); background:#E6F3FB; min-width: 1350px;">
+                    <div class="slds-p-around_small slds-p-right_large" style="align-self:center">
+                        
+                        <!-- Main -->  
+                        <div class="slds-scope">
+                            <div class="slds-grid">
+                                <div class="slds-col slds-size_12-of-12 ">
+                                    <apex:image id="logo" value="{!$Resource.Estuate_logo}" style="max-width:150px;padding-top:4px;;border-radius:15px;"></apex:image>
+                                    <span class="slds-p-left_small slds-text-color_weak slds-text-heading_large" style="color: #225595;vertical-align:middle"><b>Payment center</b></span>
+                                    <div class="slds-float_right slds-p-right_small">
+                                        <apex:commandButton styleClass="slds-button slds-button_brand" style="border-radius: 16px;margin: 10px;margin-right:12px; !important"  status="loading" value="Support"  rerender="popup" />
+                                        
+                                            <apex:commandButton styleClass="slds-button slds-button_destructive" style="border-radius: 16px;margin: 10px;margin-right:28px;padding-left: 27px;padding-right: 27px;" status="loading" rerender="logout"  value="Logout" />
+                                <apex:commandButton styleClass="slds-button slds-button_neutral" style="border-radius: 16px;margin: 10px;" value="Click" onclick="executeScript();" />
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+               </article>
+    </apex:form>
+    <!--sample end -->
+    <div id="LightningComponentid" />    
+    <script>
+    //function executeScript() {
+    $Lightning.use("c:VFLwcAura", function() {
+        $Lightning.createComponent("c:showPdfById",
+          { 
+              fileBody: '{!pdf}',
+              heightInRem:"1200"
+          },
+          "LightningComponentid",
+          function(cmp) {
+             console.log('LWC Salesforce driller added in VF page');
+          });
+
+    }
+
+);
+     //}
+    </script>
+
+
+</apex:page>

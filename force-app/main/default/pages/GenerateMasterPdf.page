@@ -1,0 +1,847 @@
+<apex:page standardController="Master_Quote__c" extensions="GenerateMasterPdfController" docType="HTML-5.0" sidebar="false" showHeader="false" renderAs="pdf" applyBodyTag="false">
+    <!-- Header Section Start--> 
+    <head>
+        <style type="text/css" media="print">
+            @page {
+            @top-center {
+            content: element(header);
+            }
+            @bottom-left {
+            content: element(footer);
+            }
+            }
+            
+            div.footer {
+            display: block;
+            text-align: right;
+            font-size:10px;
+            padding: 5px;
+            position: running(footer);
+            }
+            .pagenumber:before {
+            content: counter(page);
+            }
+            .pagecount:before {
+            content: counter(pages);
+            }
+        </style>
+    </head> 
+    <div class="footer">
+        <div>Page <span class="pagenumber"/> of <span class="pagecount"/></div>
+    </div>
+    <table width="100%" >
+        <tr width="100%">
+            <td width="30%" style="font-size:10px">
+                <apex:panelGrid columns="1" width="100%">
+                    <apex:image value="{!$Resource.RevinateLogo}" width="175" height="20"/>
+                    <apex:outputText value="2345 Yale Street, First Floor,"/>
+                    <apex:outputText value="Palo Alto, CA 94306, United States"/>
+                </apex:panelGrid>
+            </td>
+            <td width="10%" style="font-size:10px">
+                <table>
+                    <tr>
+                        <td>
+                            <apex:outputLabel value="Order Number: " style="font-weight:bold;"/>
+                            <apex:outputText value="{!orderNumber}"/>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <apex:outputLabel value="Pricing Valid Untill: " style="font-weight:bold;"/>
+                            <apex:outputText value="{!pricingValidTill}"/>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <apex:outputLabel value="Proposed By: " style="font-weight:bold;"/>
+                            <apex:outputText value="{!proposedBy}"/>
+                        </td>
+                    </tr>
+                </table>
+            </td>
+        </tr>
+    </table>
+    <!-- Header Section End--> 
+    
+    <!-- Contact Details Section Start--> 
+    <table width="100%" >
+        <tr width="100%">
+            <td width="100%" style="background-color: #F2F3F4; border:2px solid #D5D8DC; font-size:10px">
+                <apex:panelGrid columns="1" width="100%">
+                    <apex:outputText value="Account Information" style="font-weight: bold;"/>
+                </apex:panelGrid>
+            </td>
+        </tr>
+    </table>
+    <table width="100%" >
+        <tr width="100%" >
+            <td width="33%" style="font-size:10px" valign="top">
+                <table>
+                    <tr style="display: {!IF(billingEntity ='','none','table-row')}">
+                        <td style="font-weight:bold; text-align:right" >
+                            <apex:outputLabel value="Billing Entity:"/>
+                        </td>
+                        <td ><apex:outputText value="{!billingEntity}"/></td>
+                    </tr>
+                    <tr>
+                        <td style="font-weight:bold; text-align:right" >
+                            <apex:outputLabel value="Account:"/>
+                        </td>
+                        <td ><apex:outputText value="{!accountName}"/></td>
+                    </tr>
+                </table>
+            </td>
+            
+            <td width="33%" style="font-size:10px" valign="top">
+                <table>
+                    <tr>
+                        <td style="font-weight:bold; text-align:right" >
+                            <apex:outputLabel value="Currency:" />
+                        </td>
+                        <td ><apex:outputText value="{!billingcurrency}"/></td>
+                    </tr>
+                    <tr style="display: {!IF(poNumber ='','none','table-row')}">
+                        <td style="font-weight:bold; text-align:right" >
+                            <apex:outputLabel value="PO Number:"/>
+                        </td>
+                        <td ><apex:outputText value="{!poNumber}"/></td>
+                    </tr>
+                </table>
+            </td>
+            <td width="33%" style="font-size:10px" valign="top">
+                <table>
+                    <tr style="display: {!IF(taxId ='','none','table-row')}">
+                        <td style="font-weight:bold; text-align:right" >
+                            <apex:outputLabel value="Tax Id:"/>
+                        </td>
+                        <td ><apex:outputText value="{!taxId}"/></td>
+                    </tr>
+                </table>
+            </td> 
+        </tr>
+    </table>
+    <!-- Contact Details Section End-->
+    
+    <!-- Service Term Section Start--> 
+    <table width="100%" >
+        <tr width="100%">
+            <td width="100%" style="background-color: #F2F3F4; border:2px solid #D5D8DC; font-size:10px">
+                <apex:panelGrid columns="1" width="100%">
+                    <apex:outputText value="Service Term" style="font-weight: bold;"/>
+                </apex:panelGrid>
+            </td>
+        </tr>
+    </table>
+    <table width="100%" >
+        <tr width="100%" >
+            <td width="33%" style="font-size:10px" valign="top">
+                <table>
+                    <tr>
+                        <td style="font-weight:bold; text-align:right" >
+                            <apex:outputLabel value="Contract Start Date:"/>
+                        </td>
+                        <td ><apex:outputText value="Signature Date"/></td>
+                    </tr>
+                    <tr>
+                        <td style="font-weight:bold; text-align:right;"  valign= "top">
+                            <apex:outputLabel value="Initial Term:"/>
+                        </td>
+                        <td ><apex:outputText value="{!initialTerm} Months"/></td>
+                    </tr>
+                </table>
+            </td>
+            <td width="33%" style="font-size:10px" valign="top">
+                <table>
+                    <tr>
+                        <td style="font-weight:bold; text-align:right" >
+                            <apex:outputLabel value="Payment Method:"/>
+                        </td>
+                        <td ><apex:outputText value="{!paymentMethod}"/></td>
+                    </tr>
+                    <tr>
+                        <td style="font-weight:bold; text-align:right;"  valign= "top">
+                            <apex:outputLabel value="Renewal Term:"/>
+                        </td>
+                        <td ><apex:outputText value="{!renewalTerm} Months"/></td>
+                    </tr>
+                </table>
+            </td>
+            <td width="33%" style="font-size:10px" valign="top">
+                <table>
+                    <tr>
+                        <td style="font-weight:bold; text-align:right" >
+                            <apex:outputLabel value="Payment Term:"/>
+                        </td>
+                        <td ><apex:outputText value="{!paymentTerm}"/></td>
+                    </tr>
+                </table>
+            </td> 
+        </tr>
+    </table>
+    <!-- Service Term Section End--> 
+    
+    
+    <!-- Master Quote Section Start--> 
+    <table width="100%" >
+        <tr width="100%">
+            <td width="100%" style="background-color: #F2F3F4; border:2px solid #D5D8DC; font-size:10px">
+                <apex:panelGrid columns="1" width="100%">
+                    <apex:outputText value="Master Quote Details" style="font-weight: bold;"/>
+                </apex:panelGrid>
+            </td>
+        </tr>
+    </table>
+    <table width="100%" >
+        <tr width="100%" >
+            <td width="33%" style="font-size:10px" valign="top">
+                <apex:outputPanel rendered="{!subscriptionType=='New Subscription'}">
+                    <table>
+                        <tr>
+                            <td style="font-weight:bold; text-align:right" >
+                                <apex:outputLabel value="Total Monthly Cost:"/>
+                            </td>
+                            <td ><apex:outputText value="{!masterQuote.Sum_of_MRR__c}"/></td>
+                        </tr>
+                    </table>
+                </apex:outputPanel>
+                <apex:outputPanel rendered="{!subscriptionType!='New Subscription'}">
+                    <table>
+                        <tr>
+                            <td style="font-weight:bold; text-align:right" >
+                                <apex:outputLabel value="Total Delta Monthly Cost:"/>
+                            </td>
+                            <td ><apex:outputText value="{!masterQuote.Delta_MRR__c}"/></td>
+                        </tr>
+                    </table>
+                </apex:outputPanel>
+            </td>
+            
+            <td width="33%" style="font-size:10px" valign="top">
+                <table>
+                    <tr>
+                        <td style="font-weight:bold; text-align:right" >
+                            <apex:outputLabel value="Total One-Time Fee:" />
+                        </td>
+                        <td ><apex:outputText value="{!masterQuote.Sum_of_Implementation_Fee__c }"/></td>
+                    </tr>
+                </table>
+                
+            </td>
+            <td width="33%" style="font-size:10px" valign="top">
+                <apex:outputPanel rendered="{!masterQuote.Discount_Amount_1__c>0}">
+                    <table>
+                        <tr>
+                            <td style="font-weight:bold; text-align:right" >
+                                <apex:outputLabel value="Overall Discount:"/>
+                            </td>
+                            <td >
+                                
+                                <apex:outputText value="{!masterQuote.Discount_Amount_1__c}"/>&nbsp;(
+                                <apex:outputText value="{0, Number, ###,###,###,##0.00}">
+                                    <apex:param value="{!masterQuote.Sum_of_Discount__c}" id="account__type"/> 
+                                </apex:outputText>%)
+                                
+                            </td>
+                        </tr>
+                        
+                    </table>
+                </apex:outputPanel>
+            </td> 
+        </tr>
+    </table>
+    <br/>
+    <!-- Master Quote Section End-->
+    
+    <!-- Quote Product Details Section Start--> 
+    <apex:repeat value="{!ChildDetailWrapperList}" var="data">
+        <table width="100%" style="background-color: #F2F3F4; border:2px solid #D5D8DC; font-size:10px;">
+            <tr width="100%" >
+                <td width="33%" style="font-size:10px" valign="top">
+                    <table>
+                        <tr style="display: {!IF(data.quote.billingEntity='','none','table-row')}">
+                            <td style="font-weight:bold; text-align:right"  valign="top">
+                                <apex:outputLabel value="Billing Entity:"/>
+                            </td>
+                            <td ><apex:outputText value="{!data.quote.billingEntity}"/></td>
+                        </tr>
+                        <tr>
+                            <td style="font-weight:bold; text-align:right"  valign="top">
+                                <apex:outputLabel value="Account:"/>
+                            </td>
+                            <td ><apex:outputText value="{!data.quote.accountName}"/></td>
+                        </tr>
+                        
+                    </table>
+                </td>
+                <td width="33%" style="font-size:10px" valign="top">
+                    <table>
+                        <tr>
+                            <td style="font-weight:bold; text-align:right" valign="top" >
+                                <apex:outputLabel value="Bill To:"/>
+                            </td>
+                            <td ><apex:outputText value="{!data.quote.billToName}"/></td>
+                        </tr> 
+                        <tr>
+                            <td style="font-weight:bold; text-align:right" valign="top" >
+                                <apex:outputLabel value="Bill To Address:"/>
+                            </td>
+                            <td ><apex:outputText value="{!data.quote.billToAddress}"/></td>
+                        </tr>
+                    </table>
+                </td> 
+                <td width="33%" style="font-size:10px" valign="top">
+                    <table>
+                        <tr>
+                            <td width="60%" style="font-weight:bold; text-align:right"  valign="top">
+                                <apex:outputLabel value="Number of Rooms:"/>
+                            </td>
+                            <td width="40%" ><apex:outputText value="{!data.quote.numberOfRooms}"/></td>
+                        </tr>
+                        <tr>
+                            <td width="60%" style="font-weight:bold; text-align:right" valign="top" >
+                                <apex:outputLabel value="Property Address:"/>
+                            </td>
+                            <td width="40%" ><apex:outputText value="{!data.quote.propertyAddress}"/></td>
+                        </tr>
+                    </table>
+                </td> 
+            </tr>
+        </table>
+       <!-- <table width="99.7%" style="font-size:10px; border:1px solid #D5D8DC;border-collapse:collapse; margin-top:3px; margin-left:1px; margin-right:1px">
+            <thead>
+                <tr>
+                    <apex:repeat value="{!tableLabels}" var="label">
+                        <th style="font-size:10px; border:2px solid #D5D8DC;padding:5px;background-color:#D5D8DC">{!label}</th>
+                    </apex:repeat>
+                </tr>
+            </thead>
+           <tbody>
+                <apex:repeat value="{!data.qrpcList}" var="qrpc">
+                    <tr width="100%">
+                         <apex:repeat value="{!$ObjectType.zqu__QuoteRatePlanCharge__c.FieldSets.Report_Template_Field_set_New_Subscripti	}" var="fieldValue">
+                            <td style="font-size:10px; border:2px solid #D5D8DC;padding:3px">{!qrpc[fieldValue]}</td>
+                        </apex:repeat>
+                    </tr>
+                </apex:repeat>
+               <apex:repeat value="{!data.qcsList}" var="qcs">
+                    <tr width="100%">
+                         <apex:repeat value="{!$ObjectType.zqu__QuoteChargeSummary__c.FieldSets.Report_Template_Fieldset_Amendment}" var="fieldValue" rendered="{!subscriptionType=='Amend Subscription'}">
+                            <td style="font-size:10px; border:2px solid #D5D8DC;padding:3px">{!qcs[fieldValue]}</td>
+                        </apex:repeat>
+                         <apex:repeat value="{!$ObjectType.zqu__QuoteChargeSummary__c.FieldSets.Report_Template_Fieldset_Renewal}" var="fieldValue" rendered="{!subscriptionType=='Renew Subscription'}">
+                            <td style="font-size:10px; border:2px solid #D5D8DC;padding:3px">{!qcs[fieldValue]}</td>
+                        </apex:repeat>
+                         <apex:repeat value="{!$ObjectType.zqu__QuoteChargeSummary__c.FieldSets.Report_Template_Fieldset_Cancellation}" var="fieldValue" rendered="{!subscriptionType=='Cancel Subscription'}">
+                            <td style="font-size:10px; border:2px solid #D5D8DC;padding:3px">{!qcs[fieldValue]}</td>
+                        </apex:repeat>
+                    </tr>
+                </apex:repeat>
+            </tbody>
+        </table>-->
+        <div style="font-size:10px; border:2px solid #D5D8DC;padding:5px;background-color:#D5D8DC;text-align:right;">
+            <b>Total One-Time Fee: </b>{!data.Quote.implementationFee}&nbsp;&nbsp;
+            <apex:outputText rendered="{!subscriptionType!='New Subscription'}">
+                <b>Total Delta Monthly Cost: </b>{!data.Quote.mrr}
+            </apex:outputText>
+            <apex:outputText rendered="{!subscriptionType =='New Subscription'}">
+                <b>Total Monthly Cost: </b>{!data.Quote.mrr}
+            </apex:outputText>
+        </div>
+        <div style="{!IF(data.ctcWrapper.includeRezForce, 'display:block', 'display:none')}" >
+            <div style="font-size:10px; border:2px solid #D5D8DC;padding:5px; margin-top:3px; margin-left:1px; margin-right:1px">
+                <div style="{!IF(data.ctcWrapper.succcessFee!='', 'display:block', 'display:none')}" >
+                    <b>Success Fee = </b>{!data.ctcWrapper.succcessFee}%
+                </div>
+                <div style="{!IF(data.ctcWrapper.groupSucccessFee!='', 'display:block', 'display:none')}" >
+                    <b>Group Success Fee = </b>{!data.ctcWrapper.groupSucccessFee}%
+                </div>
+                <div style="{!IF(data.ctcWrapper.minimumBookingFee!='', 'display:block', 'display:none')}" >
+                    <b>Minimum Booking Fee = </b>{!data.ctcWrapper.minimumBookingFee}
+                </div>
+                <div style="{!IF(data.ctcWrapper.maximumBookingFee!='', 'display:block', 'display:none')}" >
+                    <b>Maximum Booking Fee = </b>{!data.ctcWrapper.maximumBookingFee}
+                </div>
+                <div style="{!IF(data.ctcWrapper.monthlyminimum!='', 'display:block', 'display:none')}" >
+                    <b>Monthly Minimum = </b>{!data.ctcWrapper.monthlyminimum}
+                </div>
+                <div style="{!IF(data.ctcWrapper.leadFee!='', 'display:block', 'display:none')}" >
+                    <b>Lead Fee = </b>{!data.ctcWrapper.leadFee}
+                </div>
+                <div style="{!IF(data.ctcWrapper.transferFee!='', 'display:block', 'display:none')}" >
+                    <b>Transfer Fee = </b>{!data.ctcWrapper.transferFee}
+                </div>
+            </div>
+        </div>
+        
+        <div style="font-size:10px; border:2px solid #D5D8DC;padding:5px; margin-top:3px; margin-left:1px; margin-right:1px">
+            <b>Other Terms: </b>{!data.Quote.terms}
+            
+        </div>
+        <br/>
+    </apex:repeat> 
+    <!-- Quote Product Details Section End-->
+    <div style="page-break-after:always;"></div>
+    <!-- Service Term and MSA Section Start --->
+    <table width="100%" style="border:2px solid #D5D8DC;">
+        <tr>
+            <td style="font-size:10px; background-color:#D5D8DC"><b>Other Terms</b></td>
+        </tr>
+        <tr width="100%">
+            <td style="font-size:11px;" width="50%">
+                <apex:outputText >
+                    {!masterQuote.Other_Terms__c}
+                </apex:outputText>
+            </td>                
+        </tr>
+    </table>
+    <table width="100%" style="border:2px solid #D5D8DC;">
+        <tr>
+            <td style="font-size:10px; background-color:#D5D8DC"><b>Terms &amp; Conditions</b></td>
+        </tr>
+        <tr width="100%">
+            <td style="font-size:11px;" width="50%">
+                <apex:outputText rendered="{!subscriptionType=='New Subscription'||subscriptionType=='Amend Subscription'}">
+                    <ul>
+                        <li>
+                            Billing shall commence on the Contract Start Date specified in Customer's corresponding
+                            Statement of Work for the Services which will not be affected by any implementation delays
+                            caused by Customer, including, but not limited to third-party interface installation requirements.
+                        </li>
+                        <li>
+                            Implementation Fees are non-refundable and will be billed to the Customer upon the execution of this Service 
+                            Order unless otherwise specified below. Implementation services will begin upon Revinate’s 
+                            receipt of payment in full from the Customer.
+                        </li>
+                        <li>
+                            Pricing includes account set-up, deployment, online training, support, and use of the Services during the Term 
+                            as further detailed in the attached Statement of Work.
+                        </li>
+                        <li>
+                            <apex:outputText rendered="{!autoRenewal=='Yes'}">
+                                Auto-Renewal: The Services Term will auto-renew unless Customer provides Revinate with written notice 
+                                of non-renewal at least 90 days prior to the Contract Anniversary Date.
+                                
+                            </apex:outputText>
+                            <apex:outputText rendered="{!autoRenewal=='No'}">
+                                No Auto-Renewal:  Renewal of the Services Term will be subject to Customer’s written consent prior to the expiration of the then-current Term. 
+                            </apex:outputText>
+                        </li>
+                        <apex:outputText rendered="{!MQWrapper.includeRezForce}">
+                            <li>
+                                Rezforce Services Termination:  Either party may terminate the RezForce Services at any time
+                                by providing the other party with at least thirty (30) days prior written Notice of 
+                                termination.
+                            </li>
+                        </apex:outputText>
+                        <li>
+                            Invoice Payment:  Payment of Fees shall be made via Revinate-initiated ACH debit transactions
+                            within 5 days from invoice delivery by Revinate to the billing contact email address provided
+                            by the Customer.
+                        </li>
+                        <li>
+                            Taxes: The above-quoted Fees do not include any applicable taxes payable by Customer as 
+                            further set forth in Revinate's General Terms and Conditions.
+                        </li>
+                        <li>
+                            Price Increases:  Prices automatically increase {!masterQuote.Price_Uplift_on_Renewal__c}% 
+                            on Customer’s Contract Anniversary Date.
+                        </li>
+                        <li>
+                            Quarterly Reviews: The parties will conduct quarterly reviews of the Customer’s Services 
+                            usage and Revinate may adjust Fees for the subsequent quarter solely as is reasonably
+                            necessary based on such usage.
+                        </li>
+                        <apex:outputText rendered="{!MQWrapper.MarketingAddition}">
+                            <li>
+                                Account Configuration under a Parent account:  Services will be configured as a market 
+                                under the Parent Account.  The U.S. Domestic Local &amp; Toll-Free numbers 
+                                for Property Abbreviation will also be configured and housed under the Parent Account.
+                            </li>
+                        </apex:outputText>
+                        <apex:outputText rendered="{!MQWrapper.performanceGuarantee}">
+                            <li>
+                                Performance Guarantee - Reservation Sales Enterprise:  The Reservation Sales Performance 
+                                Guarantee attached hereto as <u>Appendix A</u> is hereby incorporated by reference and made a 
+                                part of this Service Order.
+                            </li>
+                        </apex:outputText>
+                        <apex:outputText rendered="{!masterQuote.Is_Centralized_Payment__c}">
+                            <li>
+                                Centralized Payment: Customer manages the Contracting Affiliate properties listed in 
+                                this Service Order and agrees to be invoiced and pay all Fees for the associated Services 
+                                on behalf of itself and the Contracting Affiliates. 
+                            </li>
+                        </apex:outputText>
+                        <apex:outputText rendered="{!!masterQuote.Is_Centralized_Payment__c}">
+                            <li>
+                                No Centralized Payment: Customer manages the Contracting Affiliate  properties listed 
+                                in this Service Order and agrees that each Contracting Affiliate  will be invoiced 
+                                separately by and pay Revinate directly for all Fees associated with the  Services.  
+                            </li>
+                            <li>
+                                Contracting Affiliates:  If a Contracting Affiliate’s management arrangement with Customer
+                                is terminated prior to the expiration of the Contracting Affiliate’s current Services Term,
+                                Revinate will continue to provide Services to, and invoice the Contracting Affiliate for, 
+                                Fees for the Services through the end of the Term. Upon expiration of the Term, the 
+                                Contracting Affiliate may contract with Revinate directly to purchase the Services.
+                            </li>
+                            <li>
+                                This Service Order supersedes any previous Service Order executed by the parties for the 
+                                Services set forth herein. In the event the parties executed a previous Service Order for 
+                                Services not listed herein, such Service Order shall remain in full force and effect 
+                                according to its terms. 
+                            </li>
+                        </apex:outputText>
+                        <li>
+                            This Service Order is issued under and incorporates Revinate's General Terms &amp; Conditions
+                            located at <a href="https://www.revinate.com/terms/msa" target="_blank">www.revinate.com/terms/msa</a> 
+                            (the “MSA Terms”), which govern the use of the Services by Customer and any Contracting Affiliates, 
+                            and Customer represents that it has the legal authority to bind each Contracting Affiliate to the 
+                            terms of this Service Order.
+                        </li>
+                        <li>
+                            If this Service Order includes the purchase of Revinate’s Marketing Services, then the Marketing Product Specific Terms located at
+                            <a href="https://www.revinate.com/documents/terms/MarketingProductTerms.pdf" target="_blank">www.revinate.com/documents/terms/MarketingProductTerms.pdf</a> 
+                            apply in addition to the MSA Terms, and are incorporated by reference herein.
+                        </li>
+                        <li>
+                            If this Service Order includes the purchase of Revinate’s Reservation Sales Services,
+                            then the Reservation Sales Product Specific Terms located at
+                            <a href="https://www.revinate.com/documents/terms/ReservationSalesProductTerms.pdf" target="_blank">https://www.revinate.com/documents/terms/ReservationSalesProductTerms.pdf</a>
+                            apply in addition to the MSA Terms, and are incorporated by reference herein.
+                        </li>
+                        <li>
+                            If this Service Order includes the purchase of Revinate’s RezForce Services, then the RezForce 
+                            Product Specific Terms located at  
+                            <a href="https://www.revinate.com/documents/terms/RezForceProductTerms.pdf" target="_blank">https://www.revinate.com/documents/terms/RezForceProductTerms.pdf</a>
+                            apply in addition to the MSA Terms, and are incorporated by reference herein.
+                        </li>
+                        <li>
+                            If this Service Order includes the purchase of Revinate’s Ivy Services, then the Ivy Product Specific Terms located at
+                            <a href="https://www.revinate.com/documents/terms/IvyProductTerms.pdf" target="_blank">https://www.revinate.com/documents/terms/IvyProductTerms.pdf</a>
+                            apply in addition to the MSA Terms, and are incorporated by reference herein.
+                        </li>
+                        <apex:outputText rendered="{!MQWrapper.CustomMSA!=''}">
+                            <li>
+                                This Service Order is governed by the following MSA executed by the parties {!MQWrapper.CustomMSA}.
+                            </li>
+                        </apex:outputText>
+                    </ul>
+                </apex:outputText>
+                
+                <apex:outputText rendered="{!subscriptionType=='Renew Subscription'}">
+                    <ul>
+                        <li>
+                            This order is issued under, and incorporates, Revinate's Terms &amp; Conditions found at 
+                            <a href="https://www.revinate.com/terms/msa" target="_blank">www.revinate.com/terms/msa</a> 
+                            which govern the use of Revinate services for the Customer and all Customer's end-users. 
+                            Revinate's Privacy Policy can be found at: <a href="https://www.revinate.com/privacy" 
+                                                                          target="_blank">www.revinate.com/privacy</a>
+                        </li>
+                    </ul>
+                </apex:outputText>
+            </td>                
+        </tr>
+    </table>
+    <apex:outputText rendered="{!MQWrapper.showVolumeDiscountTerms}" style="font-size:10px;">
+        <!-- Page break-->
+        <div style="page-break-after: always"></div>
+        <div style="text-align: center;">
+            <b>Additional Terms</b>
+        </div>
+        <br/>
+        <div style="font-size:10px;">
+            Volume Discount Tiers: Each Customer that executes a Service Order with Revinate which includes the purchase of 
+            qualifying Services will receive the applicable Volume Discount set forth in the Table below based on the aggregate, 
+            annualized Subscription Fees of all Customers, provided, however, only those Subscription Fees being billed by 
+            Revinate will be used to calculate the actual Volume Discount applied to each Customer’s monthly invoice. 
+            Any change to the applicable Volume Discount as a result of an increase or decrease of the aggregate, 
+            annualized Subscription Fees will be reflected in the invoice for each Customer beginning the first billing 
+            month following such change.            
+        </div>
+        
+        <br/>
+        <div>
+            <table width="60%" style="font-size:10px; border:1px solid #D5D8DC;border-collapse:collapse; 
+                                      margin-top:3px; margin-left: auto; margin-right: auto;">
+                <thead>
+                    <tr>
+                        <th style="font-size:10px; border:2px solid #D5D8DC;padding:5px;background-color:#D5D8DC">
+                            Tier
+                        </th>
+                        <th style="font-size:10px; border:2px solid #D5D8DC;padding:5px;background-color:#D5D8DC">
+                            Aggregate Annualized Subscription Fees
+                        </th>
+                        <th style="font-size:10px; border:2px solid #D5D8DC;padding:5px;background-color:#D5D8DC">
+                            Discount
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <apex:repeat value="{!MQWrapper.volumeTierList}" var="VolumeTier">
+                        <tr width="100%">
+                            <td style="font-size:10px; border:2px solid #D5D8DC;padding:3px">{!VolumeTier.Tier__c}</td>
+                            <td style="font-size:10px; border:2px solid #D5D8DC;padding:3px">{!VolumeTier.Start_Range__c} - {!VolumeTier.End_Range__c}</td>
+                            <td style="font-size:10px; border:2px solid #D5D8DC;padding:3px">{!VolumeTier.Discount__c}%</td>
+                        </tr>
+                    </apex:repeat>
+                </tbody>
+            </table>
+        </div>
+        <br/>
+        <div style="font-size:10px;">
+            Subscription Fee Exclusions.  Aggregate, annualized Subscription Fees exclude any one-time or other Fees 
+            not listed in the Table above, including, but not limited to (i) US Domestic Local &amp; Toll-Free Per Number 
+            Monthly Fees and Local &amp; Toll-Free Per Minute Fees, and (ii) Education, Set-up, and Implementation Fees, 
+            which, if applicable, shall be payable by Customer pursuant to the Service Orderexecuted by the Parties.            
+        </div>
+    </apex:outputText>
+    
+    <apex:outputText rendered="{!MQWrapper.performanceGuarantee}" style="font-size:10px;">
+        <!-- Page break-->
+        <div style="page-break-after: always"></div>
+        <div style="text-align: center;">
+            <b>Appendix A</b><br/>
+            <b>Revinate Reservation Sales Performance Guarantee</b>
+        </div>
+        <br/>
+        <div style="font-size:10px;">
+            <ul type="1">
+                <li>
+                    <b><u>Definitions.</u></b>
+                    <ul type="i">
+                        <li>
+                            <b>
+                                Go-Live Date means the date the Services are implemented and available for use by Customer.
+                            </b>
+                        </li>
+                        <li>
+                            <b>
+                                Guarantee Period 
+                            </b>
+                            shall mean the {!MQWrapper.performanceGauaranteeMonths} month period following the
+                            Go-Live Date..
+                        </li>
+                        <li>
+                            <b>
+                                Revinate Guarantee 
+                            </b>
+                            shall mean the Refund offered by Revinate to Customer during the Guarantee Period as 
+                            further described herein.
+                        </li>
+                        <li>
+                            <b>
+                                Services 
+                            </b>
+                            shall mean the Revinate Reservation Sales services purchased by Customer as set forth 
+                            in the applicable Service Order executed by the parties.
+                        </li>
+                        <li>
+                            <b>
+                                Refund 
+                            </b>
+                            shall mean a refund by Revinate of the monthly subscription Fees received by Revinate from 
+                            Customer during the Guarantee Period.  No refund shall apply to any other fees paid by 
+                            Customer to Revinate unless otherwise expressly stated herein, including, but not limited to, 
+                            any toll-free number Usage Fees or other telecom charges incurred by Customer. 
+                            In addition, Revinate will deduct from the Refund the value of the toll-free 
+                            minutes and telecom services used by Customerat the fully-burdened rate paid by 
+                            Customer prior to launch of the Services.
+                        </li>
+                        <li>
+                            <b>
+                                Refund Process 
+                            </b>
+                            shall mean the process Customer must follow to request a Refund as outlined herein.
+                        </li>
+                    </ul>
+                </li>
+                <br/>
+                <li>
+                    <b><u>
+                        The Revinate Performance Guarantee.
+                        </u></b>
+                    In the event Customer’s use of the Services during the Guarantee Period does not perform in accordance 
+                    with Customer’s expectations and provided Customer has met all eligibility requirements outlined below, 
+                    Customer may use the Revinate Guarantee to request a Refund and termination of the Services under the 
+                    associated Service Order between Revinate and Customer.
+                </li>
+                <br/>
+                <li>
+                    <b><u>
+                        Eligibility Requirements.
+                        </u></b>
+                    To be eligible for the Revinate Guarantee, Customer must meet the following criteria:
+                    <ul>
+                        <li>
+                            Customer’s designee or Reservation Sales Manager (RSM) must be held accountable by
+                            the Signee (as defined below), to perform the following tasks:
+                            <ul>
+                                <li>
+                                    become familiar with the document: <b>The Revinate System Best Practices – Guide to Success</b>
+                                </li>
+                                <li>
+                                    actively engage with the Services and the associated Best Practices;
+                                </li>
+                                <li>
+                                    become Revinate Certified within 14 days following the Go-Live Date;
+                                </li>
+                                <li>
+                                    attend all on-site management training sessions and at least 75% of available web-based
+                                    training no later than sixty (60) days following the Go-Live Date;
+                                </li>
+                                <li>
+                                    score and listen to at least 5 calls per coaching session. Calls scored must fall in the
+                                    categories of Not Booked and Hot Leads. Booked calls may be scored after Not Booked and
+                                    Hot Lead calls are exhausted;
+                                </li>
+                                <li>
+                                    use the data from the call scoring to coach each reservation agent at least twice monthly;
+                                </li>
+                                <li>
+                                    implement any official and reasonable Revinate Best Practices suggested by the Revinate 
+                                    Customer Success Manager in writing;
+                                </li>
+                                <li>
+                                    participate in benchmark appointments to discuss and identify unused parts of the Revinate
+                                    System. A baseline benchmark will be performed 21 days following the Go-Live Date; 
+                                    Customer must have a score of at least 70% within 60 days following the Go-LiveDate.
+                                </li>
+                                <li>
+                                    complete the weekly Management KPI reports and send to the Customer and the Revinate 
+                                    Customer Success Manager. The KPI report should be sent each week showing the prior 
+                                    week’s data;
+                                </li>
+                            </ul>
+                        </li>
+                        <li>
+                            All reservation staff shall attend the Revinate on-site training classes.
+                        </li>
+                        <li>
+                            Customer shall attend one NAVIGATE Leaders Conference or Revinate Performance 
+                            Training if one is held within the Guarantee Period.
+                        </li>
+                        <li>
+                            Any unauthorized use by Customer of the Services or its associated toll-free numbers 
+                            (including a violation of the End User License Agreement or any terms of the Master Services 
+                            Agreement between Revinate and Customer) will invalidate this guarantee.
+                        </li>
+                        <li>
+                            Customer agrees in principle (i) that agents and the RSM staff member Incentive/Commission 
+                            Programs will be based on revenue goals, and (ii) with Revinate recommended “Best Practice” 
+                            incentive programs (compliance (1 month), conversion (2-3 months), and gross revenue (on-going)).
+                        </li>
+                        <li>
+                            Customer must have Revinate Total Website Integration (TWI) implemented within forty-five (45) 
+                            days following the Go-Live Date.
+                        </li>
+                    </ul>
+                </li>
+                <br/>
+                <li>
+                    <b><u>
+                        Refund Process.
+                        </u></b> 
+                    Customer may request a Refund at the end of the Guarantee Period in the event Customer has met all 
+                    eligibility requirements and wishes to terminate the Services.  To request a Refund, Customer shall 
+                    provide (i) written notice to Revinate of Customer’s intent to terminate the Services within 7 
+                    days following the Guarantee Period, and (ii) a telephone bill documenting Customer’s previous 
+                    toll-free cost per minute.
+                </li>
+            </ul>
+            The Revinate Guarantee does not create, and Revinate hereby disclaims, any representation or warranty regarding the Services
+            (other than the representations and warranties contained in the Master Services Agreement between Revinate and 
+            Customer). The Refund described herein shall be Customer’s sole and exclusive remedy for, and Revinate shall 
+            have no other liability with respect to, any impact the Services have on Customer’s reservation bookings and 
+            revenue.            
+        </div>
+    </apex:outputText>
+    
+    <!-- Service Term and MSA Section End --->
+    <br/>
+    <!-- Signature Section Start--> 
+    <table width="100%" >
+        <tr width="100%">
+            <td width="100%" style="background-color: #F2F3F4; border:2px solid #D5D8DC; font-size:10px">
+                <apex:panelGrid columns="1" width="100%">
+                    <apex:outputText value="Signatures" style="font-weight: bold;"/>
+                </apex:panelGrid>
+            </td>
+        </tr>
+    </table>
+    
+    <table width="100%" style="margin-top:20px;" > 
+        <tr width="100%">
+            <td style="font-size:10px;">
+                <table>
+                    <tr>
+                        <td style="font-weight:bold; text-align:right; padding:10px;" >
+                            <apex:outputLabel value="Signature:"/>
+                        </td>
+                        <td style="color: white;">\s1\</td>
+                    </tr>
+                    <tr>
+                        <td style="font-weight:bold; text-align:right; padding:10px;" >
+                            <apex:outputLabel value="Name:"/>
+                        </td>
+                        <apex:outputText rendered="{!signingName!=''}">
+                            <td style="font-weight: bold;">{!signingName}</td>
+                        </apex:outputText>
+                        <apex:outputText rendered="{!signingName==''}">
+                            <td style="color: white;">\n1\</td> 
+                        </apex:outputText>
+                    </tr>
+                    <tr>
+                        <td style="font-weight:bold; text-align:right; padding:10px;" >
+                            <apex:outputLabel value="Title:"/>
+                        </td>
+                        <apex:outputText rendered="{!signingName==''}">
+                            <td style="color: white;">\t1\</td> 
+                        </apex:outputText>
+                        <apex:outputText rendered="{!signingName!=''}">
+                            <td style="font-weight: bold;">{!signingTitle}</td>
+                        </apex:outputText>
+                        
+                    </tr>
+                    <tr>
+                        <td style="font-weight:bold; text-align:right; padding:10px;" >
+                            <apex:outputLabel value="Date:"/>
+                        </td>
+                        <td style="color: white;">\d1\</td>
+                    </tr>
+                </table>
+            </td>
+            <td style="font-size:10px">
+                <table>
+                    <tr>
+                        <td style="font-weight:bold; text-align:right; padding:10px;" >
+                            <apex:outputLabel value="Signature:"/>
+                        </td>
+                        <td style="color: white;">\s2\</td>                    
+                    </tr>
+                    <tr>
+                        <td style="font-weight:bold; text-align:right; padding:10px;" >
+                            <apex:outputLabel value="Name:"/>
+                        </td>
+                        <td style="color: white;">\n2\</td>                    
+                    </tr>
+                    <tr>
+                        <td style="font-weight:bold; text-align:right; padding:10px;" >
+                            <apex:outputLabel value="Title:"/>
+                        </td>
+                        <td style="color: white;">\t2\</td>                    
+                    </tr>
+                    <tr>
+                        <td style="font-weight:bold; text-align:right; padding:10px;" >
+                            <apex:outputLabel value="Date:"/>
+                        </td>
+                        <td style="color: white;">\d2\</td>                    
+                    </tr>
+                </table>
+            </td>
+        </tr>
+    </table>
+    <!-- Signature Section End--> 
+    
+</apex:page>
